@@ -49,11 +49,12 @@ public class LightningArc extends ThrowableProjectile implements ITargetableEnti
     }
 
     public @Nullable LivingEntity findClosestEligibleEntity() {
-        List<LivingEntity> entities = level().getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(maxDistance), e ->
-                !EntityUtils.isAlliedTo(getOwner(), e) &&
-                        e != currentTarget &&
-                        !bouncedTargets.contains(e.getStringUUID())
-                        && e.isAlive());
+        //just make it use the method provided by relics. Via my fork of relics, also makes it only target hostile enemies and not player friendly or passive entities.
+        List<LivingEntity> entities = EntityUtils.gatherPotentialTargets(currentTarget, LivingEntity.class, this.maxDistance)
+                .filter(entry -> 
+                        !bouncedTargets.contains(entry)
+                        && entry != currentTarget
+                ).toList();
 
         return entities.stream().min(Comparator.comparing(e -> e.position().distanceTo(position()))).orElse(null);
     }

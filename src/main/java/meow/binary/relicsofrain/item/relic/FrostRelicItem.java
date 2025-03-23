@@ -119,11 +119,8 @@ public class FrostRelicItem extends AbstractRORItem implements IRenderableCurio,
     }
 
     public List<LivingEntity> findEligibleEntities(LivingEntity entity, double radius) {
-        return entity.level().getEntitiesOfClass(LivingEntity.class, new AABB(entity.position(), entity.position()).inflate(radius), e ->
-                !EntityUtils.isAlliedTo(entity, e)
-                        && e.isAlive()
-                        && entity.position().distanceTo(e.position()) <= radius
-        );
+        //just make it use the method provided by relics. Via my fork of relics, also makes it only target hostile enemies and not player friendly or passive entities.
+        return EntityUtils.gatherPotentialTargets(entity, LivingEntity.class, radius).toList();
     }
 
     @Override
