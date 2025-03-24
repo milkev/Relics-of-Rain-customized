@@ -21,10 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class LightningArc extends ThrowableProjectile implements ITargetableEntity, TrailProvider {
     @Setter
@@ -38,8 +35,9 @@ public class LightningArc extends ThrowableProjectile implements ITargetableEnti
     private LivingEntity currentTarget = null;
     @Nullable
     private LivingEntity lastTarget = null;
+    //changed to be a set of UUID so that it can be checked against entities. it was just holding UUID's in string form anyway.
     @Getter
-    private Set<String> bouncedTargets = new LinkedHashSet<>();
+    private Set<UUID> bouncedTargets = new LinkedHashSet<>();
     @Setter
     @Getter
     private ItemStack itemStack = ItemStack.EMPTY;
@@ -50,9 +48,9 @@ public class LightningArc extends ThrowableProjectile implements ITargetableEnti
 
     public @Nullable LivingEntity findClosestEligibleEntity() {
         //just make it use the method provided by relics. Via my fork of relics, also makes it only target hostile enemies and not player friendly or passive entities.
-        List<LivingEntity> entities = EntityUtils.gatherPotentialTargets(currentTarget, LivingEntity.class, this.maxDistance)
+        List<LivingEntity> entities = EntityUtils.gatherPotentialTargets(this, LivingEntity.class, this.maxDistance)
                 .filter(entry -> 
-                        !bouncedTargets.contains(entry)
+                        !bouncedTargets.contains(entry.getUUID())
                         && entry != currentTarget
                 ).toList();
 
@@ -97,7 +95,7 @@ public class LightningArc extends ThrowableProjectile implements ITargetableEnti
             if (itemStack.getItem() instanceof IRelicItem relic) {
                 relic.spreadRelicExperience(owner, itemStack, 1);
             }
-            bouncedTargets.add(getTarget().getStringUUID());
+            bouncedTargets.add(getTarget().getUUID());
             targetsLeft -= 1;
             getTarget().invulnerableTime = 0;
         }

@@ -126,7 +126,7 @@ public class UkuleleItem extends AbstractRORItem implements IRenderableCurio, On
         arc.setDamage(relic.getStatValue(stack, "lightning_chain", "damage_percentage") * e.getOriginalDamage());
         arc.setMaxDistance(relic.getStatValue(stack, "lightning_chain", "max_distance"));
         arc.setTarget(target);
-        arc.getBouncedTargets().add(target.getStringUUID());
+        arc.getBouncedTargets().add(target.getUUID());
         arc.setTargetsLeft((int) relic.getStatValue(stack, "lightning_chain", "max_targets"));
         arc.setPos(target.getEyePosition());
         arc.setItemStack(stack);
